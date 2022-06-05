@@ -5,7 +5,14 @@
 /* eslint-disable react/destructuring-assignment */
 import React, { Component } from 'react';
 import {
-  StyleSheet, View, Text, Image, TouchableOpacity, Alert, TextInput, ScrollView,
+  StyleSheet,
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  Alert,
+  TextInput,
+  ScrollView,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/FontAwesome';
 import { Camera } from 'expo-camera';
@@ -55,8 +62,7 @@ class NewPost extends Component {
   }
 
   handleSubmit() {
-    if (this.state.coverUrl !== ''
-    && this.state.caption !== '') {
+    if (this.state.coverUrl !== '' && this.state.caption !== '') {
       const fields = {
         title: this.state.title,
         description: this.state.caption,
@@ -77,36 +83,47 @@ class NewPost extends Component {
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
           <TouchableOpacity
-            underlayColor="orange"
-            onPress={this.handleCameraClick}
-          >
+            underlayColor='orange'
+            onPress={this.handleCameraClick}>
             <View style={styles.post_container}>
               <View style={styles.post_button}>
                 <Text style={styles.post_text}>Post</Text>
-                <Ionicons name="camera" size={26} style={styles.post_icon} color="#fff" />
+                <Ionicons
+                  name='camera'
+                  size={26}
+                  style={styles.post_icon}
+                  color='#fff'
+                />
               </View>
             </View>
           </TouchableOpacity>
           <View>
-            <Text
-              style={styles.input_title}
-            >
-              {this.state.title}
-            </Text>
+            <Text style={styles.input_title}>{this.state.title}</Text>
             <TextInput
               style={styles.input_box}
-              onChangeText={(text) => { this.handleDetailsTextChange(text); }}
+              onChangeText={(text) => {
+                this.handleDetailsTextChange(text);
+              }}
               value={this.state.caption}
-              placeholder="Write a detailed description for your quest..."
+              placeholder='Write a detailed description for your quest...'
             />
 
-            <Image style={styles.image} source={{ uri: coverUrl || 'https://facebook.github.io/react/logo-og.png' }} />
+            <Image
+              style={styles.image}
+              source={{
+                uri: coverUrl || 'https://facebook.github.io/react/logo-og.png',
+              }}
+            />
             <TouchableOpacity
-              underlayColor="orange"
-              onPress={this.handleSubmit}
-            >
+              underlayColor='orange'
+              onPress={this.handleSubmit}>
               <View style={styles.button_container}>
-                <View style={this.state.coverUrl === '' ? styles.submit_button_gray : styles.submit_button}>
+                <View
+                  style={
+                    this.state.coverUrl === ''
+                      ? styles.submit_button_gray
+                      : styles.submit_button
+                  }>
                   <Text style={styles.submit_text}>Submit</Text>
                 </View>
               </View>
@@ -178,8 +195,6 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   input_box: {
-    // marginLeft: 'auto',
-    // marginRight: 'auto',
     width: '100%',
     height: 50,
     shadowColor: '#171717',
@@ -190,10 +205,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginBottom: 10,
     paddingHorizontal: 20,
-    // paddingLeft: 8,
-    // paddingRight: 8,
     fontSize: 14,
-    // fontWeight: 'bold',
     color: 'black',
   },
   button_container: {
@@ -226,5 +238,4 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 20,
   },
-
 });
