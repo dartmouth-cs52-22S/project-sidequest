@@ -13,11 +13,11 @@ import RewardDetail from './reward_detail';
 function RewardList() {
   const navigation = useNavigation();
   const [rewardList, setRewardList] = useState([
-    'Auto-complete today\'s taskkk',
+    "Auto-complete today's task",
     'Set task for a friend',
     'Double rewards for any task',
-    'Reroll today\'s task',
-    'Hello',
+    "Reroll today's task",
+    'Increase quest difficulty for triple rewards',
   ]);
 
   const rewards = rewardList.map((reward) => (
@@ -26,8 +26,7 @@ function RewardList() {
       style={styles.reward}
       onPress={() => {
         navigation.navigate('RewardDetail', { reward });
-      }}
-    >
+      }}>
       <Text style={styles.text}>{reward}</Text>
     </TouchableOpacity>
   ));
@@ -35,7 +34,7 @@ function RewardList() {
   return (
     <View style={styles.profile}>
       <Text style={styles.header}>Rewards</Text>
-      <ScrollView style={styles.rewardContainer} horizontal="true">
+      <ScrollView style={styles.rewardContainer} horizontal='true'>
         <View style={{ flexWrap: 'wrap' }}>{rewards}</View>
       </ScrollView>
     </View>

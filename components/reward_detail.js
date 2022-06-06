@@ -1,7 +1,5 @@
 import React from 'react';
-import {
-  View, Text, StyleSheet, TouchableOpacity,
-} from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 function RewardDetail(props) {
@@ -9,6 +7,22 @@ function RewardDetail(props) {
   const { reward } = route.params;
 
   const navigation = useNavigation();
+  let action;
+
+  const handleUseReward = (reward) => {
+    if (reward == "Auto-complete today's task") {
+      action = 'autoComplete';
+    } else if (reward == 'Set task for a friend') {
+      action = 'setFriendTask';
+    } else if (reward == 'Double rewards for any task') {
+      action = 'doubleRewards';
+    } else if (reward == "Reroll today's task") {
+      action = 'reRoll';
+    } else if (reward == 'Increase quest difficulty for triple rewards') {
+      action = 'incQuestDiff';
+    }
+    navigation.navigate('Quest', { action });
+  };
 
   return (
     <View style={styles.container}>
@@ -20,12 +34,13 @@ function RewardDetail(props) {
         {/* cancel button */}
         <TouchableOpacity
           style={styles.button}
-          onPress={() => navigation.navigate('RewardList')}
-        >
+          onPress={() => navigation.navigate('RewardList')}>
           <Text style={{ color: 'white' }}>Cancel</Text>
         </TouchableOpacity>
         {/* Continue button */}
-        <TouchableOpacity style={[styles.button, styles.contBtn]}>
+        <TouchableOpacity
+          style={[styles.button, styles.contBtn]}
+          onPress={() => handleUseReward(reward)}>
           <Text style={{ color: 'white' }}>Yes</Text>
         </TouchableOpacity>
       </View>
@@ -37,7 +52,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     // alignItems: 'center',
-    marginTop: 100,
+    marginTop: 50,
     marginHorizontal: 25,
   },
   header: {
@@ -62,7 +77,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 15,
+    marginTop: 20,
   },
   button: {
     flex: -1,

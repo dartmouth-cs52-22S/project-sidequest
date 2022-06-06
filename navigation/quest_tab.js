@@ -1,9 +1,16 @@
 /* eslint-disable react/destructuring-assignment */
 import React, { useState, useEffect } from 'react';
 import {
-  StyleSheet, View, Text, ScrollView, Modal, TouchableOpacity,
+  StyleSheet,
+  View,
+  Text,
+  ScrollView,
+  Modal,
+  TouchableOpacity,
+  TextInput,
 } from 'react-native';
 import { useIsFocused, useNavigation } from '@react-navigation/native';
+import DropDownPicker from 'react-native-dropdown-picker';
 import userGet from '../services/sidequestUser-api';
 
 function QuestTab(props) {
@@ -11,21 +18,40 @@ function QuestTab(props) {
   const navigation = useNavigation();
   const [dailyQuest, setDailyQuest] = useState(props.dailyQuest);
   const [modalVisible, setModalVisability] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
   const [user, setUser] = useState({
-    quests: [{
-      title: 'n/a',
-    }],
+    quests: [
+      {
+        title: 'n/a',
+      },
+    ],
   });
   const [userId, setUserId] = useState('62955568344a64f0f6811392');
   const isFocused = useIsFocused();
-  // const [questTitle, setQuestTitle] = useState(dailyQuest.title);
-  // ------------ put fetchData here! -------------//
+
+  // rewards-related variables
+  const { route } = props;
+  const { action } = route.params;
+  const [usedReward, setUsedReward] = useState('');
+  const [rewardModalVisible, setRewardModalVisible] = useState(false);
+  const [friendTask, setFriendTask] = useState('');
+
+  // drop down variables
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState(null);
+  const [friends, setFriends] = useState([
+    { label: 'Zhoucai', value: 'Zhoucai' },
+    { label: 'Ryan', value: 'Ryan' },
+    { label: 'Syed', value: 'Syed' },
+    { label: 'Jose', value: 'Jose' },
+    { label: 'Ke Lou', value: 'Ke Lou' },
+    { label: 'Kashan', value: 'Kashan' },
+  ]);
+
   function fetchUser() {
     userGet(userId)
       .then((responseData) => {
-        setUser(
-          responseData,
-        );
+        setUser(responseData);
       })
       .catch((error) => {
         console.log(error);
@@ -34,14 +60,14 @@ function QuestTab(props) {
 
   function handleQuestPress() {
     setModalVisability(false);
-    // setQuestTitle(questTitle);
-    navigation.navigate('Camera', { screen: 'NewPost', params: { title: dailyQuest } });
+    navigation.navigate('Camera', {
+      screen: 'NewPost',
+      params: { title: dailyQuest },
+    });
   }
 
   function handleGroupQuestPress() {
     setModalVisability(true);
-    // setQuestTitle('Jump in the river');
-    // console.log(questTitle);
   }
 
   function handleQuestExit() {
@@ -56,18 +82,33 @@ function QuestTab(props) {
     }
   }, [isFocused]);
 
+  useEffect(() => {
+    if (action) {
+      if (action == 'autoComplete') {
+        setModalVisability(true);
+      } else if (action == 'reRoll') {
+        // PUT IN CODE FOR REROLL
+        setModalMessage("Today's quest was re-rolled!");
+        setRewardModalVisible(true);
+      } else if (action == 'doubleRewards') {
+        setModalMessage("Rewards doubled for today's task!");
+        setRewardModalVisible(true);
+      } else if (action == 'incQuestDiff') {
+        setModalMessage('More difficult quest for today, good luck!');
+        setRewardModalVisible(true);
+      } else if (action == 'setFriendTask') {
+        setRewardModalVisible(true);
+      }
+    }
+  }, [action]);
+
   const groupQuestList = user.quests.map((quest) => (
-    <TouchableOpacity
-      key={quest}
-      onPress={() => handleGroupQuestPress(quest)}
-    >
+    <TouchableOpacity key={quest} onPress={() => handleGroupQuestPress(quest)}>
       <View style={styles.friendTask}>
         <Text style={styles.friendBodyTitle}>
           From your group &quot;Ohana&quot;:
         </Text>
-        <Text style={styles.friendBodyText}>
-          {quest.title}
-        </Text>
+        <Text style={styles.friendBodyText}>{quest.title}</Text>
       </View>
     </TouchableOpacity>
   ));
@@ -76,56 +117,73 @@ function QuestTab(props) {
     <ScrollView style={styles.scroll}>
       <View style={styles.container}>
         <View style={styles.title}>
-          <Text style={styles.titleText}>
-            Quests
-          </Text>
+          <Text style={styles.titleText}>Quests</Text>
         </View>
         <TouchableOpacity
           style={styles.topwrapper}
-          onPress={() => setModalVisability(true)}
-        >
+          onPress={() => setModalVisability(true)}>
           <View style={styles.header}>
-            <Text style={styles.boldText}>
-              Current quest for today:
-            </Text>
+            <Text style={styles.boldText}>Current quest for today:</Text>
           </View>
           <View style={styles.body}>
-            <Text style={styles.bodyText}>
-              {dailyQuest}
-            </Text>
+            <Text style={styles.bodyText}>{dailyQuest}</Text>
           </View>
         </TouchableOpacity>
         <Modal visible={modalVisible} transparent>
           <View style={styles.modal}>
             <View style={styles.modalContent}>
-              <Text style={styles.modalText}>
-                Upload Your Quest Post Here!
-              </Text>
+              <Text style={styles.modalText}>Upload Your Quest Post Here!</Text>
               <TouchableOpacity
                 style={styles.button}
-                onPress={() => handleQuestPress()}
-              >
-                <Text style={styles.buttonText}>
-                  Upload
-                </Text>
+                onPress={() => handleQuestPress()}>
+                <Text style={styles.buttonText}>Upload</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.buttonOne}
-                onPress={() => handleQuestExit()}
-              >
-                <Text style={styles.buttonText}>
-                  Cancel
-                </Text>
+                onPress={() => handleQuestExit()}>
+                <Text style={styles.buttonText}>Cancel</Text>
               </TouchableOpacity>
             </View>
           </View>
         </Modal>
-        <Text style={styles.titleTextTwo}>
-          Quests your friends assigned:
-        </Text>
-        <View style={styles.groupQuestList}>
-          {groupQuestList}
-        </View>
+        <Modal visible={rewardModalVisible} transparent>
+          <View style={styles.modal}>
+            <View style={styles.modalContent}>
+              {action == 'setFriendTask' ? (
+                <TextInput
+                  multiline={true}
+                  numberOfLines={5}
+                  style={styles.input_box}
+                  onChangeText={(task) => {
+                    setFriendTask(task);
+                  }}
+                  value={friendTask}
+                  placeholder='Set task for a friend...'
+                />
+              ) : (
+                <Text style={styles.modalText}>{modalMessage}</Text>
+              )}
+              {action == 'setFriendTask' && (
+                <DropDownPicker
+                  placeholder='Choose a friend'
+                  open={open}
+                  value={value}
+                  items={friends}
+                  setOpen={setOpen}
+                  setValue={setValue}
+                  setItems={setFriends}
+                />
+              )}
+              <TouchableOpacity
+                style={styles.buttonOne}
+                onPress={() => setRewardModalVisible(false)}>
+                <Text style={styles.buttonText}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+        <Text style={styles.titleTextTwo}>Quests your friends assigned:</Text>
+        <View style={styles.groupQuestList}>{groupQuestList}</View>
       </View>
     </ScrollView>
   );
@@ -170,7 +228,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: 20,
     textWrap: 'wrap',
-
   },
   bodyText: {
     paddingRight: 10,
@@ -259,7 +316,21 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFCC15',
     marginTop: 20,
   },
-
+  input_box: {
+    width: '100%',
+    height: 150,
+    shadowColor: '#171717',
+    shadowOffset: { width: -1, height: 3 },
+    shadowOpacity: 0.5,
+    shadowRadius: 10,
+    borderColor: 'black',
+    borderRadius: 5,
+    marginBottom: 10,
+    fontSize: 40,
+    fontWeight: 'bold',
+    color: 'black',
+    textAlignVertical: 'top',
+  },
 });
 
 export default QuestTab;
